@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b5560">
+<title>Hourly home care: quick survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0b6e74"/><path d="M16 7v18M7 16h18" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      Quick health care
+    </div>
+    <h1>Can someone qualified be there when you can’t?</h1>
+    <p class="lede">Nine short questions, about two minutes. Your answers help us build care that fits real families.</p>
+  </header>
+
+  <div class="progress"><div class="ecg" aria-hidden="true">
+      <svg viewBox="0 0 300 44" preserveAspectRatio="none">
+        <path class="track" id="t" pathLength="100" d="M2 28H80l10-18 14 34 12-16h20l6-8 8 14 6-6H298"/>
+        <path class="bar" id="bar" pathLength="100" d="M2 28H80l10-18 14 34 12-16h20l6-8 8 14 6-6H298"/>
+      </svg>
+    </div>
+    <div class="step" id="step" aria-live="polite"></div>
+  </div>
+
+  <main id="flow"></main>
+  <p class="note">Your answers are anonymous unless you choose to share contact details.</p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
