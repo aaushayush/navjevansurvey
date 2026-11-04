@@ -92,7 +92,7 @@ function field(q){
       <label class="opt"><input type="radio" name="q9" value="${no}"><span>${no}</span></label>
       <div id="contactBox" hidden><input type="text" name="q9_contact" placeholder="Email or phone number" autocomplete="email"></div>`;
   }
-  return banner(q) + `<legend>${esc(q.label)}</legend>${hint}${body}<div class="err" role="alert"></div>`;
+  return `<h3 class="ql">${esc(q.label)}</h3>${hint}${body}<div class="err" role="alert"></div>`;
 }
 
 function reveal(i){
@@ -108,12 +108,12 @@ function reveal(i){
     flow.appendChild(s);
     target = s;
   }
-  const el = document.createElement("fieldset");
+  const el = document.createElement("div"); el.setAttribute("role","group"); el.setAttribute("aria-label", q.topic);
   el.className = "q t-" + q.tone; el.dataset.q = q.id; el.dataset.i = i;
   const needsBtn = q.type === "check" || q.type === "text";
-  el.innerHTML = field(q) +
+  el.innerHTML = banner(q) + '<div class="body">' + field(q) +
     (needsBtn ? `<button class="next" type="button" data-act="cont">${q.type==="text"?"Continue":"Continue"}</button>` : "") +
-    (isLast ? `<button class="next send" type="button" data-act="send">Send my answers</button>` : "");
+    (isLast ? `<button class="next send" type="button" data-act="send">Send my answers</button>` : "") + "</div>";
   flow.appendChild(el);
   el.addEventListener("change", e => onChange(el, q, i, e));
   el.addEventListener("click", e => {

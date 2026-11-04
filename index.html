@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b5560">
+<meta name="theme-color" content="#0b3d3f">
 <title>NavJevan: hourly home care survey</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230b6e74'/%3E%3Cpath d='M16 26V15' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M16 18c-5.5 0-8-3-8-8 5.5 0 8 3 8 8z' fill='white'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,30 +12,39 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
-  <header>
+<header class="hero">
+  <div class="inner">
     <div class="brand">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0b6e74"/><path d="M16 26V15" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M16 18c-5.5 0-8-3-8-8 5.5 0 8 3 8 8z" fill="#fff"/><path d="M16 15c0-5 2.5-8 8-8 0 5-2.5 8-8 8z" fill="#bfe8e3"/></svg>
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#dff3ef"/><path d="M16 26V15" stroke="#0b6e74" stroke-width="2.4" stroke-linecap="round"/><path d="M16 18c-5.5 0-8-3-8-8 5.5 0 8 3 8 8z" fill="#0b6e74"/><path d="M16 15c0-5 2.5-8 8-8 0 5-2.5 8-8 8z" fill="#4fb3aa"/></svg>
       <span>NavJevan<small>Hourly home care</small></span>
     </div>
-    <h1>Can someone qualified be there when you can’t?</h1>
-    <p class="lede">Nine short questions, about two minutes. Your answers help us build care that fits real families.</p>
-    <div class="hero-art" id="heroArt" aria-hidden="true"></div>
-  </header>
+    <div class="hero-grid">
+      <div>
+        <h1>Can someone qualified be there when you can’t?</h1>
+        <p class="lede">Nine short questions, about two minutes. Your answers help us build care that fits real families.</p>
+      </div>
+      <div class="hero-art" id="heroArt" aria-hidden="true"></div>
+    </div>
+  </div>
+  <svg class="hero-ecg" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M0 40H430l20-30 28 62 24-40h30l12-16 16 28 12-12H1200"/></svg>
+</header>
 
-  <div class="progress"><div class="ecg" aria-hidden="true">
+<div class="progress">
+  <div class="inner">
+    <div class="ecg" aria-hidden="true">
       <svg viewBox="0 0 300 44" preserveAspectRatio="none">
-        <path class="track" id="t" pathLength="100" d="M2 28H80l10-18 14 34 12-16h20l6-8 8 14 6-6H298"/>
+        <path class="track" pathLength="100" d="M2 28H80l10-18 14 34 12-16h20l6-8 8 14 6-6H298"/>
         <path class="bar" id="bar" pathLength="100" d="M2 28H80l10-18 14 34 12-16h20l6-8 8 14 6-6H298"/>
       </svg>
     </div>
     <div class="step" id="step" aria-live="polite"></div>
   </div>
+</div>
 
+<div class="wrap">
   <main id="flow"></main>
   <p class="note">Your answers are anonymous unless you choose to share contact details.</p>
 </div>
-
 <script src="script.js"></script>
 </body>
 </html>
