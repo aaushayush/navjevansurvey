@@ -1,6 +1,5 @@
 // 1) Paste your deployed Google Apps Script web app URL here (ends with /exec).
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx4GI1gTeSA02UtBGlt5EAfn56sdHTLYiiCaruCeOv5Oz2KEcIf1Gf0xU1LHEHWFF_s-g/exec";
-
 const pages = [
   { title:"Your day when you’re away", sub:"Tell us what it feels like right now.", qs:[
     { id:"q1", type:"radio", label:"When your loved one is home alone during the workday, what worries you most?", opts:[
