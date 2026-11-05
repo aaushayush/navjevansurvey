@@ -1,43 +1,44 @@
 // 1) Paste your deployed Google Apps Script web app URL here (ends with /exec).
-const SCRIPT_URL = "";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx4GI1gTeSA02UtBGlt5EAfn56sdHTLYiiCaruCeOv5Oz2KEcIf1Gf0xU1LHEHWFF_s-g/exec";
 
 const pages = [
-  { title:"Your day when you’re away", sub:"Tell us what it feels like right now.", qs:[
-    { id:"q1", icon:"pulse", topic:"Medical emergencies", tone:"coral", type:"radio", label:"When your loved one is home alone during the workday, what worries you most?", opts:[
-      "Sudden medical emergencies (for example, asthma attacks or blood pressure spikes)",
-      "Missed or incorrect medication timings",
-      "General safety, mobility issues, or basic tasks like cooking and moving around",
-      "Honestly, I feel stressed the entire time I’m at work"]},
-    { id:"q2", icon:"pregnant", topic:"Pregnancy and chronic care", tone:"rose", type:"radio", label:"In high-risk situations (pregnancy, chronic illness), how easily can the main caregiver leave the house for just 2 hours?", opts:[
-      "Very stressful. I rush back or keep checking in by phone",
-      "I usually cancel my plans, errands, or breaks entirely",
-      "I rely on neighbors or extended family, which feels like a burden",
-      "It’s manageable, but I always wish someone qualified was there just in case"]},
-    { id:"q3", icon:"gauge", topic:"Your peace of mind", tone:"indigo", type:"scale", label:"How much does the lack of backup, short-term care affect your personal life, career focus, or peace of mind?",
-      hint:"1 = Not at all · 3 = Constantly in the back of my mind · 5 = Massive daily stress", lo:"Not at all", hi:"Massive daily stress" }
+  { title:"Your day when you’re away", sub:"What it feels like right now.", qs:[
+    { id:"q1", icon:"pulse", topic:"Medical emergencies", tone:"coral", type:"radio", label:"When your loved one is home alone, what worries you most?", opts:[
+      "A medical emergency (asthma, BP spike)",
+      "Missed or wrong medicines",
+      "Safety, mobility, or daily tasks",
+      "I feel stressed the whole time I’m at work"]},
+    { id:"q2", icon:"pregnant", topic:"Pregnancy and chronic care", tone:"rose", type:"radio", label:"How easily can the main caregiver step out for 2 hours?", opts:[
+      "Very stressful. I keep rushing back or calling",
+      "I usually cancel my plans or errands",
+      "I depend on neighbors or relatives",
+      "Manageable, but I’d feel better with someone qualified at home"]},
+    { id:"q3", icon:"gauge", topic:"Your peace of mind", tone:"indigo", type:"scale", label:"How much does the lack of backup care affect your life, work, or peace of mind?",
+      hint:"1 = Not at all · 3 = Always on my mind · 5 = Massive daily stress", lo:"Not at all", hi:"Massive stress" }
   ]},
-  { title:"A caregiver for just a few hours", sub:"Picture care that arrives when you step out and leaves when you’re back.", qs:[
-    { id:"q4", icon:"phone", topic:"Care on demand", tone:"teal", type:"radio", label:"Imagine an app where you book a certified, verified caregiver for 2 to 4 hours. What’s the first word that comes to mind?", opts:[
-      "Lifesaver","Long overdue","Convenient","Unnecessary for my current situation"]},
-    { id:"q5", icon:"elder", topic:"When you’d need it", tone:"amber", type:"check", label:"In which of these situations would an hourly caregiver make you say, “Take my money”?", hint:"Select all that apply.", opts:[
-      "Family members are at their 9-to-5 jobs and an elderly or disabled relative is home alone",
-      "A husband needs to run errands or take a break, and his pregnant wife is safely attended to",
-      "A patient with asthma or a history of cardiac issues needs urgent, in-between monitoring",
-      "A schedule changes unexpectedly and you need rapid emergency care cover"]},
-    { id:"q6", icon:"shield", topic:"Trust and safety", tone:"green", type:"radio", label:"What matters most when you book a caregiver for a few hours?", opts:[
-      "Speed: someone at my door within an hour",
-      "Trust: thorough vetting, background checks, and medical training (CPR, emergency response)",
-      "Affordability: paying by the hour, not a big monthly package",
-      "Simplicity: booking easily through a smartphone app"]}
+  { title:"A caregiver for just a few hours", sub:"Care that arrives when you step out.", qs:[
+    { id:"q4", icon:"phone", topic:"Care on demand", tone:"teal", type:"radio", label:"A verified caregiver for 2 to 4 hours, booked on an app. Your first reaction?", opts:[
+      "Lifesaver","Long overdue","Convenient","Not needed for me"]},
+    { id:"q5", icon:"elder", topic:"When you’d need it", tone:"amber", type:"check", label:"When would you say “Take my money”?", hint:"Select all that apply.", opts:[
+      "Relatives are at work and an elder or disabled person is home alone",
+      "A husband steps out and his pregnant wife needs someone with her",
+      "A patient with asthma or a heart condition needs close monitoring",
+      "A sudden schedule change and I need emergency cover"]},
+    { id:"q6", icon:"shield", topic:"Trust and safety", tone:"green", type:"radio", label:"What matters most when booking a caregiver for a few hours?", opts:[
+      "Speed: at my door within an hour",
+      "Trust: vetted, background-checked, trained (CPR, emergencies)",
+      "Price: pay by the hour, no big package",
+      "Ease: simple booking on my phone"]}
   ]},
-  { title:"Be the first to try it", sub:"Two last questions.", qs:[
-    { id:"q7", icon:"baby", topic:"Your household", tone:"coral", type:"radio", label:"If this hourly caregiver service launched in your neighborhood tomorrow, how likely are you to try it?", opts:[
-      "I’d download it immediately. I need this right now",
-      "I’d keep it on my phone for future emergencies or specific days",
-      "I’d wait to see reviews from others first",
-      "I don’t think my household needs this service"]},
-    { id:"q8", icon:"steth", topic:"Your story", tone:"indigo", type:"text", optional:true, label:"Is there a specific care situation or concern in your family you’d want this service to cover? (Optional)" },
-    { id:"q9", icon:"gift", topic:"Early access", tone:"amber", type:"vip", label:"Want to be a VIP early tester and get 20% off your first booking when we go live?" }
+  { title:"Be the first to try it", sub:"Last few questions.", qs:[
+    { id:"q7", icon:"baby", topic:"Your household", tone:"coral", type:"radio", label:"If it launched in your area tomorrow, would you try it?", opts:[
+      "Yes, I’d download it right away",
+      "I’d keep it for emergencies or special days",
+      "I’d wait for reviews first",
+      "My household doesn’t need it"]},
+    { id:"q8", icon:"steth", topic:"Your story", tone:"indigo", type:"text", optional:true, label:"Any specific care need in your family? (Optional)" },
+    { id:"name", icon:"user", topic:"About you", tone:"teal", type:"short", label:"What’s your name?" },
+    { id:"q9", icon:"gift", topic:"Early access", tone:"amber", type:"vip", label:"Join the VIP list for 20% off your first booking?" }
   ]}
 ];
 
@@ -65,6 +66,7 @@ const ICONS = {
   shield: sv('<path d="M32 7l20 7v16c0 13-9 22-20 27-11-5-20-14-20-27V14z"/><path d="M22 32l7 7 13-14"/>'),
   baby: sv('<circle cx="32" cy="26" r="15"/><path d="M32 11c-4 0-4-5 1-5"/><circle cx="26.5" cy="26" r="1.8" fill="currentColor"/><circle cx="37.5" cy="26" r="1.8" fill="currentColor"/><path d="M27.5 33q4.5 4 9 0"/><path d="M17 58c0-9 6-14 15-14s15 5 15 14"/>'),
   steth: sv('<path d="M14 8v16a10 10 0 0 0 20 0V8"/><path d="M24 34v7a13 13 0 0 0 26 0v-7"/><circle cx="50" cy="30" r="5"/><path d="M12 8h5M31 8h5"/>'),
+  user: sv('<circle cx="32" cy="21" r="10"/><path d="M12 56c0-12 9-19 20-19s20 7 20 19"/>'),
   gift: sv('<rect x="9" y="22" width="46" height="9" rx="2"/><path d="M13 31v23h38V31"/><path d="M32 22v32"/><path d="M32 22c-9-12-18-2-8 0M32 22c9-12 18-2 8 0"/>')
 };
 const banner = q => `<div class="banner"><span class="badge">${ICONS[q.icon]}</span><span class="topic">${esc(q.topic)}</span></div>`;
@@ -82,6 +84,8 @@ function field(q){
     body = `<p class="hint">${esc(q.hint)}</p><div class="scale">` +
       [1,2,3,4,5].map(n => `<label class="opt"><input type="radio" name="${q.id}" value="${n}" aria-label="${n}"><span>${n}</span></label>`).join("") +
       `</div><div class="ends"><span>${esc(q.lo)}</span><span>${esc(q.hi)}</span></div>`;
+  } else if(q.type === "short"){
+    body = `<input type="text" name="${q.id}" placeholder="Your full name" autocomplete="name">`;
   } else if(q.type === "text"){
     body = `<textarea name="${q.id}" placeholder="Share anything that would help us plan."></textarea>`;
   } else if(q.type === "vip"){
@@ -110,7 +114,7 @@ function reveal(i){
   }
   const el = document.createElement("div"); el.setAttribute("role","group"); el.setAttribute("aria-label", q.topic);
   el.className = "q t-" + q.tone; el.dataset.q = q.id; el.dataset.i = i;
-  const needsBtn = q.type === "check" || q.type === "text";
+  const needsBtn = q.type === "check" || q.type === "text" || q.type === "short";
   el.innerHTML = banner(q) + '<div class="body">' + field(q) +
     (needsBtn ? `<button class="next" type="button" data-act="cont">${q.type==="text"?"Continue":"Continue"}</button>` : "") +
     (isLast ? `<button class="next send" type="button" data-act="send">Send my answers</button>` : "") + "</div>";
@@ -121,12 +125,14 @@ function reveal(i){
     if(act === "cont") cont(el, q, i);
     if(act === "send") send(el, q);
   });
+  el.addEventListener("keydown", e => { if(e.key === "Enter" && q.type === "short"){ e.preventDefault(); cont(el, q, i); } });
   updateProgress();
   if(i > 0) (target || el).scrollIntoView({ behavior:"smooth", block:"start" });
 }
 
 function read(el, q){
   if(q.type === "check") return [...el.querySelectorAll("input:checked")].map(x => x.value);
+  if(q.type === "short") return el.querySelector("input").value.trim();
   if(q.type === "text") return el.querySelector("textarea").value.trim();
   const c = el.querySelector("input:checked");
   return c ? c.value : "";
@@ -147,6 +153,10 @@ function onChange(el, q, i, e){
 
 function cont(el, q, i){
   answers[q.id] = read(el, q);
+  if(q.type === "short" && !answers[q.id]){
+    el.querySelector(".err").textContent = "Please enter your name to continue.";
+    return;
+  }
   if(q.type === "check" && !answers[q.id].length){
     el.querySelector(".err").textContent = "Pick at least one to continue.";
     return;
@@ -189,9 +199,10 @@ function done(){
   stepEl.textContent = "Complete";
   bar.style.strokeDashoffset = 0;
   const vip = String(answers.q9 || "").startsWith("Yes");
+  const fn = String(answers.name || "").split(" ")[0];
   flow.innerHTML = `<div class="q done t-teal">
     <svg viewBox="0 0 120 70" aria-hidden="true"><path d="M4 40H38l8-26 14 50 12-30h10l6-8 6 14h20" fill="none" stroke="#e4572e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <h2>Thank you for your answers</h2>
+    <h2>Thank you${fn ? ", " + esc(fn) : ""}</h2>
     <p class="sub">${vip ? "You’re on the VIP list. We’ll contact you with your 20% discount when we launch." : "Your feedback will help shape care that shows up when families need it."}</p></div>`;
   window.scrollTo({ top: 0, behavior:"smooth" });
 }

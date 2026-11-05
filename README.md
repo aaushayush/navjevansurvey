@@ -60,3 +60,7 @@ Push the folder to GitHub and import it in Vercel. No settings are needed.
 Each question in `script.js` has `icon`, `topic` and `tone`. Icons live in the `ICONS` object
 (pulse, pregnant, gauge, phone, elder, shield, baby, steth, gift). Tones are `teal, coral, indigo, amber, rose, green`
 and are defined in `style.css`.
+
+## Name field
+Question `name` (type `short`) is required. To make it optional, add `optional:true` and remove the check in `cont()`.
+In the Google Sheet, add a **Name** header in the column after "Q9 Contact" and add `p.name || ''` at the end of the `appendRow` list in Apps Script.
