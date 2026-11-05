@@ -50,7 +50,6 @@ const answers = {};
 // Flatten pages into one top-to-bottom list of questions
 const list = [];
 pages.forEach(p => p.qs.forEach((q, i) => list.push({ q, sec: i === 0 ? p : null })));
-let revealed = -1;
 
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
@@ -99,35 +98,28 @@ function field(q){
   return `<h3 class="ql">${esc(q.label)}</h3>${hint}${body}<div class="err" role="alert"></div>`;
 }
 
-function reveal(i){
-  if(i >= list.length || i <= revealed) return;
-  revealed = i;
+const els = {};
+
+function build(i){
   const { q, sec } = list[i];
-  const isLast = i === list.length - 1;
-  let target;
   if(sec){
-    const s = document.createElement("div");
-    s.className = "sec";
-    s.innerHTML = `<h2>${esc(sec.title)}</h2><p>${esc(sec.sub)}</p>`;
-    flow.appendChild(s);
-    target = s;
+    const h = document.createElement("div");
+    h.className = "sec";
+    h.innerHTML = `<h2>${esc(sec.title)}</h2><p>${esc(sec.sub)}</p>`;
+    flow.appendChild(h);
   }
-  const el = document.createElement("div"); el.setAttribute("role","group"); el.setAttribute("aria-label", q.topic);
-  el.className = "q t-" + q.tone; el.dataset.q = q.id; el.dataset.i = i;
-  const needsBtn = q.type === "check" || q.type === "text" || q.type === "short";
+  const el = document.createElement("div");
+  el.setAttribute("role", "group"); el.setAttribute("aria-label", q.topic);
+  el.className = "q t-" + q.tone; el.dataset.q = q.id;
+  const isLast = i === list.length - 1;
   el.innerHTML = banner(q) + '<div class="body">' + field(q) +
-    (needsBtn ? `<button class="next" type="button" data-act="cont">${q.type==="text"?"Continue":"Continue"}</button>` : "") +
-    (isLast ? `<button class="next send" type="button" data-act="send">Send my answers</button>` : "") + "</div>";
+    (isLast ? `<button class="next send" type="button">Send my answers</button>` : "") + "</div>";
   flow.appendChild(el);
-  el.addEventListener("change", e => onChange(el, q, i, e));
-  el.addEventListener("click", e => {
-    const act = e.target.dataset.act;
-    if(act === "cont") cont(el, q, i);
-    if(act === "send") send(el, q);
-  });
-  el.addEventListener("keydown", e => { if(e.key === "Enter" && q.type === "short"){ e.preventDefault(); cont(el, q, i); } });
-  updateProgress();
-  if(i > 0) (target || el).scrollIntoView({ behavior:"smooth", block:"start" });
+  els[q.id] = el;
+  el.addEventListener("input", () => onChange(el, q, i));
+  el.addEventListener("change", () => onChange(el, q, i));
+  const sendBtn = el.querySelector(".send");
+  if(sendBtn) sendBtn.addEventListener("click", send);
 }
 
 function read(el, q){
@@ -138,48 +130,52 @@ function read(el, q){
   return c ? c.value : "";
 }
 
-function onChange(el, q, i, e){
-  answers[q.id] = read(el, q);
-  el.classList.add("answered");
-  el.querySelector(".err").textContent = "";
-  if(q.type === "vip"){
-    el.querySelector("#contactBox").hidden = !String(answers.q9).startsWith("Yes");
-    return;
-  }
-  if((q.type === "radio" || q.type === "scale") && i === revealed){
-    setTimeout(() => reveal(i + 1), 380);
-  }
-}
+const has = a => Array.isArray(a) ? a.length > 0 : !!a;
 
-function cont(el, q, i){
+function onChange(el, q, i){
+  const before = has(answers[q.id]);
   answers[q.id] = read(el, q);
-  if(q.type === "short" && !answers[q.id]){
-    el.querySelector(".err").textContent = "Please enter your name to continue.";
-    return;
+  el.classList.toggle("answered", has(answers[q.id]));
+  el.querySelector(".err").textContent = "";
+  if(q.type === "vip") el.querySelector("#contactBox").hidden = !String(answers.q9).startsWith("Yes");
+  updateProgress();
+  // Gently move to the next question after a first single-choice answer
+  if(!before && (q.type === "radio" || q.type === "scale") && i < list.length - 1){
+    setTimeout(() => {
+      const nx = els[list[i + 1].q.id], prev = nx.previousElementSibling;
+      (prev && prev.classList.contains("sec") ? prev : nx).scrollIntoView({ behavior:"smooth", block:"start" });
+    }, 380);
   }
-  if(q.type === "check" && !answers[q.id].length){
-    el.querySelector(".err").textContent = "Pick at least one to continue.";
-    return;
-  }
-  el.classList.add("answered");
-  el.querySelector('[data-act="cont"]').hidden = true;
-  reveal(i + 1);
 }
 
 function updateProgress(){
-  stepEl.textContent = `Question ${revealed + 1} of ${list.length}`;
-  bar.style.strokeDashoffset = 100 - ((revealed + 1) / list.length) * 100;
+  const req = list.filter(x => !x.q.optional);
+  const n = req.filter(x => has(answers[x.q.id])).length;
+  stepEl.textContent = `${n} of ${req.length} answered`;
+  bar.style.strokeDashoffset = 100 - (n / req.length) * 100;
 }
 
-async function send(el, q){
-  answers[q.id] = read(el, q);
-  answers.q9_contact = el.querySelector('[name="q9_contact"]').value.trim();
-  const err = el.querySelector(".err");
-  if(!answers.q9){ err.textContent = "Choose an answer to send."; return; }
-  if(answers.q9.startsWith("Yes") && !answers.q9_contact){
-    err.textContent = "Add an email or phone number so we can reach you."; return;
-  }
-  const btn = el.querySelector(".send");
+function missing(q){
+  const a = answers[q.id];
+  if(q.optional) return "";
+  if(q.type === "check") return has(a) ? "" : "Pick at least one.";
+  if(q.type === "short") return a ? "" : "Please enter your name.";
+  if(!a) return "Choose an answer.";
+  if(q.type === "vip" && String(a).startsWith("Yes") && !answers.q9_contact) return "Add an email or phone number so we can reach you.";
+  return "";
+}
+
+async function send(){
+  list.forEach(({ q }) => { answers[q.id] = read(els[q.id], q); });
+  answers.q9_contact = els.q9.querySelector('[name="q9_contact"]').value.trim();
+  let first = null;
+  list.forEach(({ q }) => {
+    const m = missing(q);
+    els[q.id].querySelector(".err").textContent = m;
+    if(m && !first) first = els[q.id];
+  });
+  if(first){ first.scrollIntoView({ behavior:"smooth", block:"center" }); return; }
+  const btn = els.q9.querySelector(".send"), err = els.q9.querySelector(".err");
   btn.disabled = true; btn.textContent = "Sending…";
   const payload = { ...answers, q5: (answers.q5 || []).join(" | "), submittedAt: new Date().toISOString() };
   try{
@@ -207,4 +203,5 @@ function done(){
   window.scrollTo({ top: 0, behavior:"smooth" });
 }
 
-reveal(0);
+list.forEach((_, i) => build(i));
+updateProgress();
