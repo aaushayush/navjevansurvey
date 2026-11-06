@@ -98,28 +98,32 @@ function field(q){
   return `<h3 class="ql">${esc(q.label)}</h3>${hint}${body}<div class="err" role="alert"></div>`;
 }
 
-const els = {};
+const els = {}, slides = [];
+let cur = 0;
 
 function build(i){
   const { q, sec } = list[i];
-  if(sec){
-    const h = document.createElement("div");
-    h.className = "sec";
-    h.innerHTML = `<h2>${esc(sec.title)}</h2><p>${esc(sec.sub)}</p>`;
-    flow.appendChild(h);
-  }
+  const slide = document.createElement("section");
+  slide.className = "slide"; slide.hidden = true;
+  if(sec) slide.insertAdjacentHTML("beforeend", `<div class="sec"><h2>${esc(sec.title)}</h2><p>${esc(sec.sub)}</p></div>`);
   const el = document.createElement("div");
   el.setAttribute("role", "group"); el.setAttribute("aria-label", q.topic);
   el.className = "q t-" + q.tone; el.dataset.q = q.id;
   const isLast = i === list.length - 1;
   el.innerHTML = banner(q) + '<div class="body">' + field(q) +
-    (isLast ? `<button class="next send" type="button">Send my answers</button>` : "") + "</div>";
-  flow.appendChild(el);
-  els[q.id] = el;
+    `<div class="nav"><button class="back" type="button" data-go="-1" ${i === 0 ? "hidden" : ""}>Back</button>` +
+    (isLast ? `<button class="next send" type="button" data-go="send">Send my answers</button>`
+            : `<button class="next" type="button" data-go="1">Next</button>`) + `</div></div>`;
+  slide.appendChild(el);
+  flow.appendChild(slide);
+  slides.push(slide); els[q.id] = el;
   el.addEventListener("input", () => onChange(el, q, i));
   el.addEventListener("change", () => onChange(el, q, i));
-  const sendBtn = el.querySelector(".send");
-  if(sendBtn) sendBtn.addEventListener("click", send);
+  el.addEventListener("click", e => {
+    const g = e.target.dataset.go;
+    if(g === "send") send(); else if(g) go(Number(g));
+  });
+  el.addEventListener("keydown", e => { if(e.key === "Enter" && q.type === "short"){ e.preventDefault(); go(1); } });
 }
 
 function read(el, q){
@@ -138,21 +142,10 @@ function onChange(el, q, i){
   el.classList.toggle("answered", has(answers[q.id]));
   el.querySelector(".err").textContent = "";
   if(q.type === "vip") el.querySelector("#contactBox").hidden = !String(answers.q9).startsWith("Yes");
-  updateProgress();
-  // Gently move to the next question after a first single-choice answer
+  // First single-choice answer moves on to the next slide automatically
   if(!before && (q.type === "radio" || q.type === "scale") && i < list.length - 1){
-    setTimeout(() => {
-      const nx = els[list[i + 1].q.id], prev = nx.previousElementSibling;
-      (prev && prev.classList.contains("sec") ? prev : nx).scrollIntoView({ behavior:"smooth", block:"start" });
-    }, 380);
+    setTimeout(() => { if(cur === i) go(1); }, 420);
   }
-}
-
-function updateProgress(){
-  const req = list.filter(x => !x.q.optional);
-  const n = req.filter(x => has(answers[x.q.id])).length;
-  stepEl.textContent = `${n} of ${req.length} answered`;
-  bar.style.strokeDashoffset = 100 - (n / req.length) * 100;
 }
 
 function missing(q){
@@ -165,16 +158,39 @@ function missing(q){
   return "";
 }
 
+function go(d){
+  const q = list[cur].q;
+  if(d > 0){
+    answers[q.id] = read(els[q.id], q);
+    const m = missing(q);
+    if(m){ els[q.id].querySelector(".err").textContent = m; return; }
+  }
+  show(cur + d, d);
+}
+
+function show(i, dir, scroll = true){
+  if(i < 0 || i >= slides.length) return;
+  cur = i;
+  slides.forEach((s, k) => { s.hidden = k !== i; });
+  const s = slides[i];
+  s.classList.remove("from-left", "from-right");
+  void s.offsetWidth;
+  s.classList.add(dir < 0 ? "from-left" : "from-right");
+  stepEl.textContent = `Question ${i + 1} of ${list.length}`;
+  bar.style.strokeDashoffset = 100 - ((i + 1) / list.length) * 100;
+  if(scroll) s.scrollIntoView({ behavior:"smooth", block:"start" });
+}
+
 async function send(){
   list.forEach(({ q }) => { answers[q.id] = read(els[q.id], q); });
   answers.q9_contact = els.q9.querySelector('[name="q9_contact"]').value.trim();
-  let first = null;
-  list.forEach(({ q }) => {
+  let firstBad = -1;
+  list.forEach(({ q }, i) => {
     const m = missing(q);
     els[q.id].querySelector(".err").textContent = m;
-    if(m && !first) first = els[q.id];
+    if(m && firstBad < 0) firstBad = i;
   });
-  if(first){ first.scrollIntoView({ behavior:"smooth", block:"center" }); return; }
+  if(firstBad >= 0){ show(firstBad, firstBad < cur ? -1 : 1); return; }
   const btn = els.q9.querySelector(".send"), err = els.q9.querySelector(".err");
   btn.disabled = true; btn.textContent = "Sending…";
   const payload = { ...answers, q5: (answers.q5 || []).join(" | "), submittedAt: new Date().toISOString() };
@@ -204,4 +220,4 @@ function done(){
 }
 
 list.forEach((_, i) => build(i));
-updateProgress();
+show(0, 1, false);

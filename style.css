@@ -121,3 +121,16 @@ button[disabled]{opacity:.6;cursor:wait}
   .send{width:100%}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.hero-ecg path{stroke-dashoffset:0}}
+
+/* ---- Slide mode: one question at a time ---- */
+.slide{scroll-margin-top:70px}
+.slide .q,.slide .sec{animation:none}
+.slide.from-right{animation:inR .4s ease both}
+.slide.from-left{animation:inL .4s ease both}
+@keyframes inR{from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:none}}
+@keyframes inL{from{opacity:0;transform:translateX(-44px)}to{opacity:1;transform:none}}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px}
+.nav .next,.nav .send{margin:0 0 0 auto;width:auto}
+.nav .back{margin:0;background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.nav .back:hover{border-color:var(--a);filter:none}
+@media (max-width:640px){.nav .send{flex:1}}
